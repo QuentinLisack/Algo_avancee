@@ -161,71 +161,71 @@ bool rules::authorize_selection(Uint8 x, Uint8 y) {
 	return true;
 }
 
-bool rules::valid_mvt() {
-	//first, check if the mvt is on the board
+bool rules::valid_move() {
+	//first, check if the movement is on the board
 	if ((ox < 0)||(ox > 8)||(nx < 0)||(nx > 8)||(oy < 0)||(oy > 8)||(ny < 0)||(ny > 8)) {
 #ifdef DEBUG
-		cout<<"trying to mvt outside of the board, refusing mvt"<<endl;
+		cout<<"trying to move outside of the board, refusing move"<<endl;
 		return false;
 #endif
 	}
 	//check source is not destination
 	if ((ox == nx) && (oy == ny)) {
 #ifdef DEBUG
-		cout<<"moving on same spot, refusing mvt"<<endl;
+		cout<<"moving on same spot, refusing move"<<endl;
 		return false;
 #endif
 	}
-	//now, check we don't mvt on empty space
+	//now, check we don't move on empty space
 	if (holes.get(nx, ny)) {
 #ifdef DEBUG
-		cout<<"trying to mvt into a hole, refusing mvt"<<endl;
+		cout<<"trying to move into a hole, refusing move"<<endl;
 #endif
 		return false;
 	}
 	//check there is no one there
 	if (blobs.get(nx, ny) != -1) {
 #ifdef DEBUG
-		cout<<"trying to mvt into someone, refusing mvt"<<endl;
+		cout<<"trying to move into someone, refusing move"<<endl;
 #endif
 		return false;
 	}
-	//check if we are trying to mvt someone from the other side
+	//check if we are trying to move someone from the other side
 	if (blobs.get(ox, oy) != Sint32(CURRENT_PLAYER)) {
 #ifdef DEBUG
-		cout<<"trying to mvt from a blob of the other side, refusing mvt"<<endl;
+		cout<<"trying to move from a blob of the other side, refusing move"<<endl;
 #endif
 		return false;
 	}
-	//check distance and type of mvt
+	//check distance and type of move
 	//we first compute the square of the distance
 	Uint32 d = (ox - nx) * (ox - nx);
 	Uint32 d2 = (oy - ny) * (oy - ny);
 	d = (d>d2)?d:d2;
 	if (d<=4) {
-		//mvt accepted
+		//move accepted
 		return true;
 	}
 	//too far
 #ifdef DEBUG
-	cout<<"trying to mvt too far, refusing mvt"<<endl;
+	cout<<"trying to move too far, refusing move"<<endl;
 #endif
 	return false;
 }
 
-bool rules::set_mvt(Uint8 oldx, Uint8 oldy, Uint8 x, Uint8 y) {
+bool rules::set_move(Uint8 oldx, Uint8 oldy, Uint8 x, Uint8 y) {
 		ox = oldx;
 		oy = oldy;
 		nx = x;
 		ny = y;
-		if (valid_mvt()) {
+		if (valid_move()) {
 #ifdef DEBUG
-			cout<<"mvt from ("<<(Uint32)oldx<<","<<(Uint32)oldy<<") to ("<<(Uint32)x<<","<<(Uint32)y<<") accepted"<<endl;
+			cout<<"move from ("<<(Uint32)oldx<<","<<(Uint32)oldy<<") to ("<<(Uint32)x<<","<<(Uint32)y<<") accepted"<<endl;
 #endif
 			if (gametype == NETGAME) {
-				game->bwnet->do_mvt(ox, oy, nx, ny);
+				game->bwnet->do_move(ox, oy, nx, ny);
 			} else {
-				do_mvt();
+				do_move();
 			}
 			return true;
 		} else {
@@ -233,13 +233,13 @@ bool rules::set_mvt(Uint8 oldx, Uint8 oldy, Uint8 x, Uint8 y) {
 		}
 }
 
-void rules::do_mvt() {
+void rules::do_move() {
 #ifdef DEBUG
 	cout<<"player: "<<(CURRENT_PLAYER)<<" moving from: "<<(Uint32)ox<<","<<(Uint32)oy<<" to "<<(Uint32)nx<<","<<(Uint32)ny<<endl;
 #endif
-	if (!valid_mvt()) {
+	if (!valid_move()) {
 		
-		cerr<<"invalid mvt from player "<<CURRENT_PLAYER<<", he loses!"<<endl;
+		cerr<<"invalid move from player "<<CURRENT_PLAYER<<", he loses!"<<endl;
 		//WARNING: this code does not work well with 4P mode
 		for(Uint8 i = 0 ; i < 8 ; i++)
 			for(Uint8 j = 0 ; j < 8 ; j++)
@@ -250,7 +250,7 @@ void rules::do_mvt() {
 		
 		//we don't need selection anymore
 		game->bwboard->unselect_tile(ox, oy);
-		//first check if we need to create a new blob or to mvt an old one
+		//first check if we need to create a new blob or to move an old one
 		if (((ox - nx)*(ox - nx)<=1)&&((oy - ny)*(oy - ny)<=1)) {
 			//it's a copy
 			//notify local board of the copy
@@ -258,9 +258,9 @@ void rules::do_mvt() {
 			//update our info
 			blobs.set(nx ,ny, CURRENT_PLAYER);
 		} else {
-			//it's a mvt
-			//notify local board of the mvt
-			game->bwboard->mvt_blob(ox, oy, nx, ny);
+			//it's a move
+			//notify local board of the move
+			game->bwboard->move_blob(ox, oy, nx, ny);
 			//update rules info
 			blobs.set(ox ,oy, -1);
 			blobs.set(nx ,ny, CURRENT_PLAYER);
@@ -302,7 +302,7 @@ void* timer(void*d)
 }
 
 
-void rules::compute_mvt() {
+void rules::compute_move() {
 
 	shmem_init(true);
 	
@@ -327,7 +327,7 @@ void rules::compute_mvt() {
 		/* empty */;
 	pthread_cancel(timerThread);
 	
-	mvt m = shmem_get();
+	movement m = shmem_get();
 	ox = m.ox;
 	oy = m.oy;
 	nx = m.nx;
@@ -336,13 +336,13 @@ void rules::compute_mvt() {
 	
 	
 #ifdef DEBUG
-	cout<<"computer computed mvt from: "<<(Uint32)ox<<","<<(Uint32)oy<<" to "<<(Uint32)nx<<","<<(Uint32)ny<<endl;
+	cout<<"computer computed move from: "<<(Uint32)ox<<","<<(Uint32)oy<<" to "<<(Uint32)nx<<","<<(Uint32)ny<<endl;
 #endif
 
 	if (gametype == NETGAME) {
-		game->bwnet->do_mvt(ox, oy, nx, ny);
+		game->bwnet->do_move(ox, oy, nx, ny);
 	} else {
-		do_mvt();
+		do_move();
 	}
 }
 
@@ -363,7 +363,7 @@ void rules::next_turn() {
 		if (alive[i]) num++;
 
 	bool not_finished = false;
-	bool can_mvt[number_of_players];
+	bool can_move[number_of_players];
 
 // #ifdef DEBUG
 // 	cout<<"turn finished ; remaining players : "<<num<<endl;
@@ -371,12 +371,12 @@ void rules::next_turn() {
 
 	if (num != 1) {
 	
-		//first, check if someone can mvt (iterate on all empty spaces)
+		//first, check if someone can move (iterate on all empty spaces)
 		for(Uint16 i = 0 ; i < number_of_players ; i++)
-			can_mvt[i] = false;
+			can_move[i] = false;
 		for(Sint16 x = 0 ; x < 8 ; x++) 
 			for(Sint16 y = 0 ; y < 8 ; y++) {
-				//if a hole we can't mvt in it, continue
+				//if a hole we can't move in it, continue
 				if(holes.get(x, y)) continue;
 				//same if already occupied
 				if(blobs.get(x, y) != -1) continue;
@@ -386,13 +386,13 @@ void rules::next_turn() {
 					for(Sint16 j = -2 ; j <= 2 ; j++) {
 						if ((x+i < 0)||(y+j < 0)||(x+i > 7)||(y+j > 7)) continue;
 						if (blobs.get(x+i, y+j) != -1)
-							can_mvt[blobs.get(x+i, y+j)] = true;
+							can_move[blobs.get(x+i, y+j)] = true;
 					}
 			}
 		
 		//now if no one can play any more, game is finished
 		for(Uint16 i = 0 ; i < number_of_players ; i++) 
-			not_finished = not_finished || can_mvt[i];
+			not_finished = not_finished || can_move[i];
 	
 	}
 
@@ -401,7 +401,7 @@ void rules::next_turn() {
 	} else {
 		//ok we can continue playing
 		//loop until a player can play
-		while(!can_mvt[CURRENT_PLAYER]) {
+		while(!can_move[CURRENT_PLAYER]) {
 			turn_number++;
 		}
 	
@@ -409,7 +409,7 @@ void rules::next_turn() {
 	
 		game->set_main_label(colors[CURRENT_PLAYER]+" player's turn");
 		if (players[CURRENT_PLAYER]->is_computer()) {
-			//start computing mvt
+			//start computing move
 			pthread_t thread;
 			pthread_create (&thread, NULL, launch_computations, NULL);
 		}
@@ -473,6 +473,6 @@ void rules::end() {
 }
 
 void* launch_computations(void* data) {
-	game->bwrules->compute_mvt();
+	game->bwrules->compute_move();
 	return  NULL;
 }

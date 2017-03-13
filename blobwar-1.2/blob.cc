@@ -12,7 +12,7 @@ blob::blob(Uint8 x, Uint8 y, Uint16 p, SDL_Surface *s) {
 	//compute the position on screen
 	position.w = s->w;
 	position.h = s->h;
-	mvt(x,y);
+	movement(x,y);
 
 	//7frames in the animation
 	r.w = s->w / 7;
@@ -33,7 +33,7 @@ void blob::display() {
 	SDL_BlitSurface(surface, &r, game->screen, &position);
 }
 
-void blob::mvt(Uint8 x, Uint8 y) {
+void blob::movement(Uint8 x, Uint8 y) {
 	position.x = 70 + (x+y) * (84/2) + (84- (surface->w)/7)/2;
 	position.y = 290 + (y-x) * (40/2);
 }

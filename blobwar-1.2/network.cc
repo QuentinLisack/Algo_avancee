@@ -155,9 +155,9 @@ void network::parse(char* msg) {
 		return;
 	}
 	//movement
-	if (strncmp(msg, "/do_mvt", 8) == 0) {
+	if (strncmp(msg, "/do_move", 8) == 0) {
 #ifdef DEBUG
-		cout<<"mvt command received from server"<<endl;
+		cout<<"move command received from server"<<endl;
 #endif
 		int ox, oy, nx, ny;
 		sscanf(msg+9, "(%d,%d) to (%d,%d)", &ox, &oy, &nx, &ny);
@@ -165,16 +165,16 @@ void network::parse(char* msg) {
 		game->bwrules->oy = (Uint8) oy;
 		game->bwrules->nx = (Uint8) nx;
 		game->bwrules->ny = (Uint8) ny;
-		game->bwrules->do_mvt();
+		game->bwrules->do_move();
 		return;
 	}
 	//not a command, then it's a message
 	message(msg);
 }
 
-void network::do_mvt(Uint8 ox, Uint8 oy, Uint8 nx, Uint8 ny) {
+void network::do_move(Uint8 ox, Uint8 oy, Uint8 nx, Uint8 ny) {
 	char tmp[40];
-	strcpy(send_buffer, "/do_mvt ");
+	strcpy(send_buffer, "/do_move ");
 	snprintf(tmp, 40, "(%d,%d) to (%d,%d)\n", ox, oy, nx, ny);
 	strncat(send_buffer, tmp, 100-strlen(send_buffer)-1);
 	send();

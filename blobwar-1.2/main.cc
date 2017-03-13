@@ -17,10 +17,10 @@
  *
  * 	At each turn, a player can select one of his blobs
  * 	and duplicate him on an adjacent cell
- * 	of the board (diagonal movements allowed) or mvt him
+ * 	of the board (diagonal movements allowed) or move him
  * 	by making him jump to a cell at a distance of 2.
  *
- * 	After the mvt (or the copy), the blob will convert
+ * 	After the move (or the copy), the blob will convert
  * 	any adjacent blob to his color. A small counter at the
  * 	bottom of the screen keeps track of the scores of all
  * 	players. To increase the interest of the game, 
@@ -28,8 +28,8 @@
  * 	Different boards with different patterns of holes are
  * 	available to play with.
  *
- * 	When a player cannot mvt, he loses his turn.
- * 	When no player can mvt any more, the game finishes.
+ * 	When a player cannot move, he loses his turn.
+ * 	When no player can move any more, the game finishes.
  * 	The player with the highest number of blobs is then
  * 	the winner.
  *
@@ -41,10 +41,10 @@
  *	file. In fact, the artificial intelligence is called
  *	by the method computeBestMove() of the strategy class.
  *	When this method returns, the function _saveBestMove should
- *	have been called with the coordinates of the mvt (from old board cell
+ *	have been called with the coordinates of the move (from old board cell
  *	to new board cell).
  *
- *	To compute the best mvt to play, several structures are needed:
+ *	To compute the best move to play, several structures are needed:
  *	-# Strategy::_holes is an array of booleans indicating 
  *	for each cell whether it is a hole or not.
  *	-# Strategy::_current_player is the number of the player who is playing

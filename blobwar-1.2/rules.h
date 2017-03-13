@@ -20,7 +20,7 @@ class Timer;
 
 #define CURRENT_PLAYER (turn_number % number_of_players)
 
-#include "mvt.h"
+#include "movement.h"
     
 
 /**player class
@@ -63,8 +63,8 @@ class rules {
 		//!end the game (someone won)
 		void end();
 		//
-		//!checks if chosen mvt is valid
-		bool valid_mvt();
+		//!checks if chosen movement is valid
+		bool valid_move();
 
 	public:
 
@@ -90,14 +90,14 @@ class rules {
 		~rules();
 		//!ask the rules whether we have right to select a blob
 		bool authorize_selection(Uint8 x, Uint8 y);
-		//!tell the rules we do a mvt
-		bool set_mvt(Uint8 oldx, Uint8 oldy, Uint8 x, Uint8 y);
+		//!tell the rules we do a movement
+		bool set_move(Uint8 oldx, Uint8 oldy, Uint8 x, Uint8 y);
 
-		//!compute the computer mvt (current player)
-		void compute_mvt();
+		//!compute the computer move (current player)
+		void compute_move();
 
-		//!play the mvt set by player or computed
-		void do_mvt();
+		//!play the move set by player or computed
+		void do_move();
 
 		//!update local interface to display current scores
 		void set_scores();

@@ -1,20 +1,20 @@
-#ifndef __mvt_H
-#define __mvt_H
+#ifndef __MOVEMENT_H
+#define __MOVEMENT_H
 #include<SDL.h>
 
 
-/** mvt class
+/** Movement class
  */
-struct mvt
+struct movement
 {
-    mvt(){}
+    movement(){}
     
-    mvt(const mvt & mv)
+    movement(const movement & mv)
             :ox(mv.ox), oy(mv.oy), nx(mv.nx), ny(mv.ny) {}
-    mvt(const Uint8 oldx, const Uint8 oldy, const Uint8 newx, const Uint8 newy)
+    movement(const Uint8 oldx, const Uint8 oldy, const Uint8 newx, const Uint8 newy)
             : ox(oldx),oy(oldy),nx(newx),ny(newy){}
     
-    mvt& operator=(const mvt& mv)
+    movement& operator=(const movement& mv)
         {ox=mv.ox;oy=mv.oy;nx=mv.nx;ny=mv.ny; return *this;}
         
     

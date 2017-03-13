@@ -31,7 +31,7 @@ mouse::~mouse()
 
 
 /**this moves the mouse, draw new mouse, updates coordinates*/
-void mouse::mvt(SDL_Event * event)
+void mouse::movement(SDL_Event * event)
 {
 	//update mouse coordinates
 	mousepos.x = event->motion.x;
@@ -43,7 +43,7 @@ void mouse::mvt(SDL_Event * event)
 	recompute_focuses();
 }
 
-void mouse::mvt(Sint32 x, Sint32 y) {
+void mouse::movement(Sint32 x, Sint32 y) {
 	//update mouse coordinates
 	mousepos.x = x;
 	mousepos.y = y;
@@ -54,7 +54,7 @@ void mouse::mvt(Sint32 x, Sint32 y) {
 	recompute_focuses();
 }
 
-/**this does'nt mvt the mouse but displays it*/
+/**this does'nt move the mouse but displays it*/
 void mouse::display() {
 #ifdef SOFT_MOUSE
 	SDL_BlitSurface(image, NULL, game->screen, &mousepos);

@@ -5,14 +5,14 @@
 #include "strategy.h"
 #include "shmem.h"
 
-//! Display a mvt on console
-void saveBestMoveToConsole(mvt& m)
+//! Display a move on console
+void saveBestMoveToConsole(movement& m)
 {
 	cout<<"SAVE MOVE: "<<(Uint32)m.ox<<","<<(Uint32)m.oy<<" to "<<(Uint32)m.nx<<","<<(Uint32)m.ny<<endl;
 }
 
-//! Save a mvt to the shared memory with blobwar
-void saveBestMoveToShmem(mvt& m)
+//! Save a move to the shared memory with blobwar
+void saveBestMoveToShmem(movement& m)
 {
 #ifdef DEBUG
 	saveBestMoveToConsole(m);
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 	//holes.display();
 	int cplayer = atoi(argv[i++]);
 	//std::cout << "player: "<<cplayer<<std::endl;
-	void (*func)(mvt&) = saveBestMoveToShmem;
+	void (*func)(movement&) = saveBestMoveToShmem;
 	
 	shmem_init();
 	func = saveBestMoveToShmem;

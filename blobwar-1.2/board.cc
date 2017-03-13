@@ -224,7 +224,7 @@ void board::unfocus() {
 
 void board::click() {
 	if (fx != 255) {
-		//if a tile was selected try mvt or change selection
+		//if a tile was selected try movement or change selection
 		if (selected_tile != NULL) {
 			//if target is a blob change selection
 			if (blobs[fx][fy] != NULL) {
@@ -235,8 +235,8 @@ void board::click() {
 					select_tile(fx, fy);
 				}
 			}
-			//else try mvt
-			else game->bwrules->set_mvt(selected_tile->get_x(), selected_tile->get_y(), fx, fy);
+			//else try movement
+			else game->bwrules->set_move(selected_tile->get_x(), selected_tile->get_y(), fx, fy);
 		} else {
 			//if not try select
 			if (game->bwrules->authorize_selection(fx, fy)) {
@@ -314,12 +314,12 @@ void board::create_blob(Uint8 x, Uint8 y, Uint16 player) {
 	//create blob
 	blobs[x][y] = new blob(x, y, player, blobs_surfaces[player]);
 	game->display2update = true;
-	//after a mvt selection is put back to none
+	//after a movement selection is put back to none
 	selected_tile = NULL;
 }
 
-void board::mvt_blob(Uint8 ox, Uint8 oy, Uint8 x, Uint8 y) {
-	blobs[ox][oy]->mvt(x, y);
+void board::move_blob(Uint8 ox, Uint8 oy, Uint8 x, Uint8 y) {
+	blobs[ox][oy]->movement(x, y);
 	blobs[x][y] = blobs[ox][oy];
 	blobs[ox][oy] = NULL;
 	game->display2update = true;

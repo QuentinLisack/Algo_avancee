@@ -87,7 +87,7 @@ class board : public rollover {
 		//!y coordinate of tile currently under mouse
 		Uint8 fy;
 
-		//!tile with blob selected for mvt
+		//!tile with blob selected for move
 		tile* selected_tile;
 
 		//!current number of blobs (scores) for each player
@@ -125,8 +125,8 @@ class board : public rollover {
 		void click();
 		//!add a new blob
 		void create_blob(Uint8 x, Uint8 y, Uint16 player);
-		//!mvt a blob
-		void mvt_blob(Uint8 ox, Uint8 oy, Uint8 nx, Uint8 ny);
+		//!move a blob
+		void move_blob(Uint8 ox, Uint8 oy, Uint8 nx, Uint8 ny);
 		//!enable the board to react to mouse events
 		void activate();
 		//!are we activated ?

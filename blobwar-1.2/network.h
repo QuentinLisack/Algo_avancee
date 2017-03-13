@@ -51,8 +51,8 @@ class network {
 		void handle();
 		//!parse messages and execute corresponding actions
 		void parse(char* msg);
-		//!send mvt to the server
-		void do_mvt(Uint8 ox, Uint8 oy, Uint8 nx, Uint8 ny);
+		//!send move to the server
+		void do_move(Uint8 ox, Uint8 oy, Uint8 nx, Uint8 ny);
 		//!return the type of player used in network games
 		Uint32 get_player_type();	
 		//!go through all received messages and execute them all

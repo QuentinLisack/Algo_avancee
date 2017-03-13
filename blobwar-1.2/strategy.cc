@@ -2,7 +2,7 @@
 
 
 
-void Strategy::applyMove (const mvt& mv) {
+void Strategy::applyMove (const movement& mv) {
         // To be completed...
 }
 
@@ -11,7 +11,7 @@ Sint32 Strategy::estimateCurrentScore () const {
     return 0;
 }
 
-vector<mvt>& Strategy::computeValidMoves (vector<mvt>& valid_moves) const {
+vector<movement>& Strategy::computeValidMoves (vector<movement>& valid_moves) const {
         // To be completed...
     return valid_moves;
 }
@@ -19,8 +19,8 @@ vector<mvt>& Strategy::computeValidMoves (vector<mvt>& valid_moves) const {
 void Strategy::computeBestMove () {
     // To be improved...
 
-    //The following code find a valid mvt.
-    mvt mv(0,0,0,0);
+    //The following code find a valid move.
+    movement mv(0,0,0,0);
     //iterate on starting position
     for(mv.ox = 0 ; mv.ox < 8 ; mv.ox++) {
         for(mv.oy = 0 ; mv.oy < 8 ; mv.oy++) {

@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "bidiarray.h"
-#include "mvt.h"
+#include "movement.h"
 
 
 
@@ -17,17 +17,17 @@ private:
     //! Current player
     Uint16 _current_player;
     
-    //! Call this function to save your best mvts.
+    //! Call this function to save your best move.
     //! Multiple call can be done each turn,
-    //! Only the last mvt saved will be used.
-    void (*_saveBestMove)(mvt&);
+    //! Only the last move saved will be used.
+    void (*_saveBestMove)(movement&);
 
 public:
         // Constructor from a current situation
     Strategy (bidiarray<Sint16>& blobs, 
               const bidiarray<bool>& holes,
               const Uint16 current_player,
-              void (*saveBestMove)(mvt&))
+              void (*saveBestMove)(movement&))
             : _blobs(blobs),_holes(holes), _current_player(current_player), _saveBestMove(saveBestMove)
         {
         }
@@ -43,15 +43,15 @@ public:
     ~Strategy() {}
     
         /** 
-         * Apply a mvt to the current state of blobs
-         * Assumes that the mvt is valid
+         * Apply a move to the current state of blobs
+         * Assumes that the move is valid
          */
-    void applyMove (const mvt& mv);
+    void applyMove (const movement& mv);
 
         /**
          * Compute the vector containing every possible moves
          */
-    vector<mvt>& computeValidMoves (vector<mvt>& valid_moves) const;
+    vector<movement>& computeValidMoves (vector<movement>& valid_moves) const;
 
         /**
          * Estimate the score of the current state of the game
@@ -59,7 +59,7 @@ public:
     Sint32 estimateCurrentScore () const;
 
         /**
-         * Find the best mvt.
+         * Find the best move.
          */
     void computeBestMove ();
     

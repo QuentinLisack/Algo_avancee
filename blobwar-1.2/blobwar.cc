@@ -393,7 +393,7 @@ void blobwar::handle()
     while (SDL_PollEvent(&event) != 0) {
         switch (event.type) {
         case SDL_MOUSEMOTION:
-            mousepointer->mvt(&event);
+            mousepointer->movement(&event);
             break;
 		default:
 			break;

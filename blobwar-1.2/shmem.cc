@@ -10,13 +10,13 @@
 #define SHMEM_KEY1 425678
 int* first_is_new = NULL;
 #define SHMEM_KEY2 425679
-mvt* first = NULL;
+movement* first = NULL;
 #define SHMEM_KEY3 425680
-mvt* second = NULL;
+movement* second = NULL;
 
 
 
-void shmem_init(bool init_mvt) {
+void shmem_init(bool init_move) {
 	int shmid;
 	
 	//Create the segment.
@@ -31,34 +31,34 @@ void shmem_init(bool init_mvt) {
 	}
 	
 	//Create the segment.
-	if ((shmid = shmget(SHMEM_KEY2, sizeof(mvt), IPC_CREAT | 0666)) < 0) {
+	if ((shmid = shmget(SHMEM_KEY2, sizeof(movement), IPC_CREAT | 0666)) < 0) {
 		perror("shmget");
 		exit(1);
 	}
 	//Now we attach the segment to our data space.
-	if ((first = (mvt*)shmat(shmid, NULL, 0)) == (mvt*) -1) {
+	if ((first = (movement*)shmat(shmid, NULL, 0)) == (movement*) -1) {
 		perror("shmat");
 		exit(1);
 	}
 	
 	//Create the segment.
-	if ((shmid = shmget(SHMEM_KEY3, sizeof(mvt), IPC_CREAT | 0666)) < 0) {
+	if ((shmid = shmget(SHMEM_KEY3, sizeof(movement), IPC_CREAT | 0666)) < 0) {
 		perror("shmget");
 		exit(1);
 	}
 	//Now we attach the segment to our data space.
-	if ((second = (mvt*)shmat(shmid, NULL, 0)) == (mvt*) -1) {
+	if ((second = (movement*)shmat(shmid, NULL, 0)) == (movement*) -1) {
 		perror("shmat");
 		exit(1);
 	}
 	
-	if(init_mvt) {
-		*first = mvt(0,0,0,0);
+	if(init_move) {
+		*first = movement(0,0,0,0);
 		*first_is_new = true;
 	}
 }
 
-mvt shmem_get() {
+movement shmem_get() {
 	if(first_is_new == NULL) {
 		cout<<"Use shmem_init() before shmem_get()."<<endl;
 		exit(1);
@@ -73,7 +73,7 @@ mvt shmem_get() {
 	
 }
 
-void shmem_set(mvt& m) {
+void shmem_set(movement& m) {
 	if(first_is_new == NULL) {
 		cout<<"Use shmem_init() before shmem_set()."<<endl;
 		exit(1);

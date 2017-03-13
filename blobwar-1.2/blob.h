@@ -22,8 +22,8 @@ class blob : public widget {
 		~blob();
 		//!display on screen
 		void display();
-		//!mvt the blob
-		void mvt(Uint8 x, Uint8 y);
+		//!move the blob
+		void movement(Uint8 x, Uint8 y);
 		//!change the player owning this blob
 		void change_owner(Uint16 p, SDL_Surface* s);
 		//!return current owner

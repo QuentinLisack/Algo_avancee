@@ -21,10 +21,10 @@ class mouse {
 		//!destructor
 		~mouse();
 		//!handles moving and displaying
-		void mvt(SDL_Event *event);
+		void movement(SDL_Event *event);
 		//!handles moving and displaying
-		void mvt(Sint32 x, Sint32 y);
-		//!doesn't mvt but redraws mouse
+		void movement(Sint32 x, Sint32 y);
+		//!doesn't movement but redraws mouse
 		void display();
 		//!activate mouse handling
 		void enable();
