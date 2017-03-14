@@ -5,7 +5,8 @@
 #include "bidiarray.h"
 #include "movement.h"
 
-
+//custom includes
+#include <mutex> //WARNING c++11
 
 class Strategy {
 
