@@ -7,6 +7,8 @@
 
 //custom includes
 #include <mutex> //WARNING c++11
+#include <assert.h>//debug
+
 
 class Strategy {
 
@@ -49,11 +51,21 @@ public:
          */
     void applyMove (const movement& mv);
 
+
+    		/**
+	 * Apply a move a given map
+	 * Assumes that the move is valid
+	 */
+
+    bidiarray<Sint16> applyFakeMove(const movement& mv, bidiarray<Sint16> Fakeblobs, Uint16 cp);
+
         /**
          * Compute the vector containing every possible moves
          */
     vector<movement>& computeValidMoves (vector<movement>& valid_moves) const;
 
+
+    vector<movement>& computeFakeMoves (vector<movement>& valid_moves,bidiarray<Sint16> Fakeblobs,Uint16 cp) const;
         /**
          * Estimate the score of the current state of the game
          */
@@ -64,6 +76,11 @@ public:
          */
     void computeBestMove ();
     
+    movement MinMax(int maxlevel);
+
+    Sint32 MinMaxScore(int level, int maxlevel, Uint16 cp,movement mv, bidiarray<Sint16> Fakeblobs);
+
+    bool isBetter(Sint32 value, Sint32 bestvalue, Uint16 cp );
     
 };
 
