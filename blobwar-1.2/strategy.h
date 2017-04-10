@@ -8,6 +8,7 @@
 //custom includes
 #include <mutex> //WARNING c++11
 #include <assert.h>//debug
+#include <omp.h>
 
 
 class Strategy {
