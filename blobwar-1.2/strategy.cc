@@ -113,13 +113,14 @@ vector<movement>& Strategy::computeValidMoves(
 	return valid_moves;
 }
 
+
 vector<movement>& Strategy::computeFakeMoves (vector<movement>& valid_moves,bidiarray<Sint16> Fakeblobs, Uint16 cp) const{
 	//std::mutex mut; //WARNING c++11
 
 		valid_moves.clear();
+	    movement mv(0,0,0,0);
 
 		//avec le mutex toutes les bocles sont parallelisables.
-		    movement mv(0,0,0,0);
 		    //iterate on starting position
 		    for(mv.ox = 0 ; mv.ox < 8 ; mv.ox++) {
 		        for(mv.oy = 0 ; mv.oy < 8 ; mv.oy++) {
@@ -144,6 +145,47 @@ vector<movement>& Strategy::computeFakeMoves (vector<movement>& valid_moves,bidi
 	    return valid_moves;
 }
 
+/*  VERSION PARALLELE, la creation des threads fait du mal aux perfs.
+vector<movement>& Strategy::computeFakeMoves (vector<movement>& valid_moves,bidiarray<Sint16> Fakeblobs, Uint16 cp) const{
+	std::mutex mut; //WARNING c++11
+
+		valid_moves.clear();
+	    movement mv(0,0,0,0);
+
+		//avec le mutex toutes les bocles sont parallelisables.
+		    //iterate on starting position
+			#pragma omp parallel for
+		    for(int i=2;i<8;i++) {
+		    	mv.ox=i;
+				#pragma omp parallel for
+		        for(int j=0;j<8;j++) {
+		        	mv.oy=j;
+		            if (Fakeblobs.get(mv.ox, mv.oy) == (int) cp) {
+		                //iterate on possible destinations
+						#pragma omp parallel for
+		                for(int k = std::max(0,mv.ox-2) ; k <= std::min(7,mv.ox+2) ; k++) {
+		                	mv.nx=k;
+							#pragma omp parallel for
+		                    for(int l = std::max(0,mv.oy-2) ; l <= std::min(7,mv.oy+2) ; l++) {
+		                    	mv.ny=l;
+		                        if (_holes.get(mv.nx, mv.ny)) continue;
+		                        if (Fakeblobs.get(mv.nx, mv.ny) == -1){
+		                        	mut.lock();//WARNING c++11
+		                        	valid_moves.push_back(mv);
+		                        	mut.unlock();//WARNING c++11
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		    }
+
+
+
+	    return valid_moves;
+}
+
+*/
 void Strategy::computeBestMove () {
     //alphabeta
 	int i=1;
@@ -217,7 +259,7 @@ movement Strategy::AlphaBeta(int maxlevel){
 		}
 
 
-		cout<< value << "\t /" << bestvalue <<"\n"; // DEBUG
+		//cout<< value << "\t /" << bestvalue <<"\n"; // DEBUG
 
 	}
 
