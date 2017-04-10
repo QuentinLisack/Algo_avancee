@@ -149,7 +149,7 @@ void Strategy::computeBestMove () {
 	int i=1;
 	movement mv;
 	while(true){
-		mv=MinMax(i);
+		mv=AlphaBeta(i);
 		_saveBestMove(mv);
 		cout<< "level "<< i << "saved________________\n";//pour faire joli, a virer pour les perfs
 		i++;
@@ -187,11 +187,11 @@ Sint32 Strategy::MinMaxScore(int level, int maxlevel, Uint16 cp,movement mv, bid
 	}
 
 	vector<movement> movelist;
-	movelist=computeFakeMoves(movelist,Fakeblobs,cp);
+	movelist=computeFakeMoves(movelist,FB,cp);
 	Sint32 bestvalue=((cp==0)?50000:-50000);
 	Sint32 value=0;
 	for(movement m: movelist){
-		value=MinMaxScore(level+1,maxlevel,1-cp,m,Fakeblobs);
+		value=MinMaxScore(level+1,maxlevel,1-cp,m,FB);
 		if(isBetter(value,bestvalue,cp)){
 			bestvalue=value;
 		}
@@ -230,13 +230,18 @@ Sint32 Strategy::AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
 
 	bidiarray<Sint16> FB;
 	FB = applyFakeMove(mv, Fakeblobs, cp);
+	vector<movement> movelist;
+	movelist = computeFakeMoves(movelist, FB, cp);
 
-	if (level == maxlevel) {
+	if (level == maxlevel ) {
 		return estimateFakeScore(FB);
 	}
 
-	vector<movement> movelist;
-	movelist = computeFakeMoves(movelist, Fakeblobs, cp);
+	if(movelist.size()==0){
+		return estimateFakeScore(FB)*100;
+	}
+
+
 	Sint32 value = 0;
 	Sint32 alpha = A;
 	Sint32 beta = B;
@@ -244,7 +249,7 @@ Sint32 Strategy::AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
 	//cond noeud min
 	if (cp == 0) {
 		for (movement m : movelist) {
-			value = AlphaBetaScore(level + 1, maxlevel, 1 - cp, m, Fakeblobs,
+			value = AlphaBetaScore(level + 1, maxlevel, 1 - cp, m, FB,
 					alpha, beta);
 			if (value < beta) {
 				beta = value;
@@ -258,7 +263,7 @@ Sint32 Strategy::AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
 	} else {
 		//cond noeud max
 		for (movement m : movelist) {
-			value = AlphaBetaScore(level + 1, maxlevel, 1 - cp, m, Fakeblobs,
+			value = AlphaBetaScore(level + 1, maxlevel, 1 - cp, m, FB,
 					alpha, beta);
 			if (value > alpha) {
 				alpha = value;
