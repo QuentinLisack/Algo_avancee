@@ -24,7 +24,7 @@ bidiarray<Sint16> Strategy::applyFakeMove(const movement& mv, bidiarray<Sint16> 
 			(2 - std::max(std::abs(mv.ox - mv.nx), std::abs(mv.oy - mv.ny)))
 					* (cp + 1) - 1);
 
-	//parallelisable
+	//parallelisable mais mauvais pour les perfs
 	//#pragma omp parallel for
 	for(int i=std::max(mv.nx-1,0); i<std::min(mv.nx+2,8);i++){
 		//#pragma omp parallel for
@@ -37,9 +37,12 @@ bidiarray<Sint16> Strategy::applyFakeMove(const movement& mv, bidiarray<Sint16> 
 
 Sint32 Strategy::estimateCurrentScore() const {
 	Sint32 retour = 0;
+	Sint32 x=0;
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-
+			x=this->_blobs.get(i, j);
+			retour+=(x*(3*x+1)/2-1);
+/*
 			switch (this->_blobs.get(i, j)) {
 
 			case 0:
@@ -50,7 +53,7 @@ Sint32 Strategy::estimateCurrentScore() const {
 				break;
 			default:
 				break;
-			}
+			}*/
 
 		}
 	}
