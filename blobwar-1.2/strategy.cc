@@ -248,11 +248,32 @@ movement Strategy::AlphaBeta(int maxlevel){
 	vector<movement> movelist;
 	movelist=computeValidMoves(movelist);
 	Sint32 bestvalue=((_current_player==0)?50000:-50000);
-	Sint32 value=0;
+	//Sint32 value=0;
 	movement bestmove;
+	
+	int n = movelist.size();
+	Sint32 scores[n]; 
+	
+	#pragma omp parallel for
+	for(Sint32 i = 0; i<n; i++){
+		
+		scores[i] = AlphaBetaScore(1, maxlevel, _current_player, movelist.at(i), this->_blobs, -5000, 5000);
+		
+	}
+	
+	Sint32 maxIndex = 0;
+	for(Sint32 j = 1; j < n; j++){
+		if(isBetter(scores[j], bestvalue, _current_player)){
+			bestvalue=scores[j];
+			maxIndex = j;
+		}
+	}
+	
+	
+	/*
 	for(movement m : movelist){
 
-		value=AlphaBetaScore(1,maxlevel,_current_player,m,this->_blobs,-5000,5000);
+		value=AlphaBetaScore(1, maxlevel, _current_player, m, this->_blobs, -5000, 5000);
 		if(isBetter(value,bestvalue,_current_player)){
 			bestvalue=value;
 			bestmove=m;
@@ -262,8 +283,9 @@ movement Strategy::AlphaBeta(int maxlevel){
 		//cout<< value << "\t /" << bestvalue <<"\n"; // DEBUG
 
 	}
+	*/
 
-	return bestmove;
+	return movelist.at(maxIndex);
 }
 
 Sint32 Strategy::AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
