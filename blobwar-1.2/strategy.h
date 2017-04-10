@@ -70,17 +70,21 @@ public:
          * Estimate the score of the current state of the game
          */
     Sint32 estimateCurrentScore () const;
-
+    Sint32 estimateFakeScore(bidiarray<Sint16> Fakeblobs);
         /**
          * Find the best move.
-         */
-    void computeBestMove ();
-    
-    movement MinMax(int maxlevel);
+	 */
+	void computeBestMove();
 
-    Sint32 MinMaxScore(int level, int maxlevel, Uint16 cp,movement mv, bidiarray<Sint16> Fakeblobs);
+	movement MinMax(int maxlevel);
 
-    bool isBetter(Sint32 value, Sint32 bestvalue, Uint16 cp );
+	Sint32 MinMaxScore(int level, int maxlevel, Uint16 cp, movement mv,
+			bidiarray<Sint16> Fakeblobs);
+	movement AlphaBeta(int maxlevel);
+
+	Sint32 AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
+			bidiarray<Sint16> Fakeblobs, Sint32 A, Sint32 B);
+	bool isBetter(Sint32 value, Sint32 bestvalue, Uint16 cp);
     
 };
 

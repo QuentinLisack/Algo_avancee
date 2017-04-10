@@ -55,6 +55,30 @@ Sint32 Strategy::estimateCurrentScore() const {
 	return retour;
 }
 
+Sint32 Strategy::estimateFakeScore(bidiarray<Sint16> Fakeblobs){
+	Sint32 retour = 0;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+
+				switch (Fakeblobs.get(i, j)) {
+
+				case 0:
+					retour--;
+					break;
+				case 1:
+					retour++;
+					break;
+				default:
+					break;
+				}
+
+			}
+		}
+
+		return retour;
+}
+
+
 vector<movement>& Strategy::computeValidMoves(
 		vector<movement>& valid_moves) const {
 
@@ -121,7 +145,7 @@ vector<movement>& Strategy::computeFakeMoves (vector<movement>& valid_moves,bidi
 }
 
 void Strategy::computeBestMove () {
-    //minmax
+    //alphabeta
 	int i=1;
 	movement mv;
 	while(true){
@@ -139,12 +163,13 @@ movement Strategy::MinMax(int maxlevel){
 	Sint32 value=0;
 	movement bestmove;
 	for(movement m : movelist){
+
 		value=MinMaxScore(1,maxlevel,_current_player,m,this->_blobs);
 		if(isBetter(value,bestvalue,_current_player)){
 			bestvalue=value;
 			bestmove=m;
 		}
-		//cout<< value << "\t /" << bestvalue <<"\n"; // DEBUG
+		cout<< value << "\t /" << bestvalue <<"\n"; // DEBUG
 
 	}
 
@@ -153,11 +178,14 @@ movement Strategy::MinMax(int maxlevel){
 }
 
 Sint32 Strategy::MinMaxScore(int level, int maxlevel, Uint16 cp,movement mv, bidiarray<Sint16> Fakeblobs){
-	if(level==maxlevel){
-		return estimateCurrentScore();
-	}
+
 	bidiarray<Sint16> FB;
 	FB=applyFakeMove(mv,Fakeblobs,cp);
+
+	if(level==maxlevel){
+		return estimateFakeScore(FB);
+	}
+
 	vector<movement> movelist;
 	movelist=computeFakeMoves(movelist,Fakeblobs,cp);
 	Sint32 bestvalue=((cp==0)?50000:-50000);
@@ -170,6 +198,79 @@ Sint32 Strategy::MinMaxScore(int level, int maxlevel, Uint16 cp,movement mv, bid
 	}
 	return bestvalue;
 
+
+}
+
+
+movement Strategy::AlphaBeta(int maxlevel){
+	vector<movement> movelist;
+	movelist=computeValidMoves(movelist);
+	Sint32 bestvalue=((_current_player==0)?50000:-50000);
+	Sint32 value=0;
+	movement bestmove;
+	for(movement m : movelist){
+
+		value=AlphaBetaScore(1,maxlevel,_current_player,m,this->_blobs,-5000,5000);
+		if(isBetter(value,bestvalue,_current_player)){
+			bestvalue=value;
+			bestmove=m;
+		}
+
+
+		cout<< value << "\t /" << bestvalue <<"\n"; // DEBUG
+
+	}
+
+	return bestmove;
+}
+
+Sint32 Strategy::AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
+		bidiarray<Sint16> Fakeblobs, Sint32 A, Sint32 B) {
+
+
+	bidiarray<Sint16> FB;
+	FB = applyFakeMove(mv, Fakeblobs, cp);
+
+	if (level == maxlevel) {
+		return estimateFakeScore(FB);
+	}
+
+	vector<movement> movelist;
+	movelist = computeFakeMoves(movelist, Fakeblobs, cp);
+	Sint32 value = 0;
+	Sint32 alpha = A;
+	Sint32 beta = B;
+
+	//cond noeud min
+	if (cp == 0) {
+		for (movement m : movelist) {
+			value = AlphaBetaScore(level + 1, maxlevel, 1 - cp, m, Fakeblobs,
+					alpha, beta);
+			if (value < beta) {
+				beta = value;
+			}
+			if (alpha >= beta) {
+
+				return alpha;
+			}
+		}
+		return beta;
+	} else {
+		//cond noeud max
+		for (movement m : movelist) {
+			value = AlphaBetaScore(level + 1, maxlevel, 1 - cp, m, Fakeblobs,
+					alpha, beta);
+			if (value > alpha) {
+				alpha = value;
+			}
+			if (alpha >= beta) {
+
+				return beta;
+
+			}
+		}
+		return alpha;
+	}
 
 }
 
