@@ -65,26 +65,63 @@ public:
          */
     vector<movement>& computeValidMoves (vector<movement>& valid_moves) const;
 
-
+    	/**
+    	 * Compute the vector containing every possible moves on a given map
+    	 */
     vector<movement>& computeFakeMoves (vector<movement>& valid_moves,bidiarray<Sint16> Fakeblobs,Uint16 cp) const;
         /**
          * Estimate the score of the current state of the game
          */
     Sint32 estimateCurrentScore () const;
+
+    /**
+            * Estimate the score of the given state of the game
+            */
     Sint32 estimateFakeScore(bidiarray<Sint16> Fakeblobs);
+
         /**
          * Find the best move.
 	 */
 	void computeBestMove();
 
+	/*
+	 * initialise the minmax search for the best move
+	 * maxlevel: number of moves to compute
+	 * return best move
+	 */
 	movement MinMax(int maxlevel);
 
+	/**
+	 * implement the minmax search for the best move
+	 * cp: current player for the upcoming move
+	 * mv: movement to be tested
+	 * Fakeblob: state of the map before mv is applied
+	 * return best score
+	 */
 	Sint32 MinMaxScore(int level, int maxlevel, Uint16 cp, movement mv,
 			bidiarray<Sint16> Fakeblobs);
+
+	/**
+	 * initialise the alphabeta search for the best move
+	 * maxlevel: number of moves to compute
+	 * return best move
+	 */
 	movement AlphaBeta(int maxlevel);
 
+	/**
+	 * implement the minmax search for the best move
+	 * cp: current player for the upcoming move
+	 * mv: movement to be tested
+	 * Fakeblob: state of the map before mv is applied
+	 * A,B: initial alpha beta bracket
+	 *return best score
+	 */
 	Sint32 AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
 			bidiarray<Sint16> Fakeblobs, Sint32 A, Sint32 B);
+
+	/**
+	 *return true if & only if value is more profitable to cp than bestvalue
+	 */
 	bool isBetter(Sint32 value, Sint32 bestvalue, Uint16 cp);
     
 };
