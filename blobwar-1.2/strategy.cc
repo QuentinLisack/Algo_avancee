@@ -8,6 +8,7 @@ void Strategy::applyMove(const movement& mv) {
 					* (this->_current_player + 1) - 1);
 
 	//parallelisable
+
 	for(int i=std::max(mv.nx-1,0); i<std::min(mv.nx+2,8);i++){
 		for(int j=std::max(mv.ny-1,0); j<std::min(mv.ny+2,8);j++){
 				this->_blobs.set(i,j,(this->_blobs.get(i,j)==-1)?-1:_current_player);
@@ -24,7 +25,9 @@ bidiarray<Sint16> Strategy::applyFakeMove(const movement& mv, bidiarray<Sint16> 
 					* (cp + 1) - 1);
 
 	//parallelisable
+	//#pragma omp parallel for
 	for(int i=std::max(mv.nx-1,0); i<std::min(mv.nx+2,8);i++){
+		//#pragma omp parallel for
 		for(int j=std::max(mv.ny-1,0); j<std::min(mv.ny+2,8);j++){
 				Fakeblobs.set(i,j,(Fakeblobs.get(i,j)==-1)?-1:cp);
 			}
