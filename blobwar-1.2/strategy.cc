@@ -204,9 +204,9 @@ void Strategy::computeBestMove () {
 	movement mv;
 	//on ne gere ici que la boucle principale,elle doit etre tuée par l'appelant.
 	while(true){
-		mv=MinMax(i);
+		mv=AlphaBeta(i);
 		_saveBestMove(mv);
-		 cout<< "level "<< i << "saved________________\n";//pour faire joli, a virer pour les perfs
+		 //cout<< "level "<< i << "saved________________\n";//pour faire joli, a virer pour les perfs
 		i++;
 	}
 }
@@ -233,32 +233,31 @@ movement Strategy::MinMax(int maxlevel){
 	return bestmove;
 }
 
-Sint32 Strategy::MinMaxScore(int level, int maxlevel, Uint16 cp,movement mv, bidiarray<Sint16> Fakeblobs){
+Sint32 Strategy::MinMaxScore(int level, int maxlevel, Uint16 cp, movement mv,
+		bidiarray<Sint16> Fakeblobs) {
 
 	bidiarray<Sint16> FB;
-	FB=applyFakeMove(mv,Fakeblobs,cp);
-
+	FB = applyFakeMove(mv, Fakeblobs, cp);
+	vector<movement> movelist;
+	movelist = computeFakeMoves(movelist, FB, cp);
 	//retour du score si profondeurs max
-	if(level==maxlevel){
+	if (level == maxlevel) {
 		return estimateFakeScore(FB);
 	}
 	//on privilegie/defavorise ,selon le score, les situations qui terminent la partie
-	if(movelist.size()==0){
-		return estimateFakeScore(FB)*100;
+	if (movelist.size() == 0) {
+		return estimateFakeScore(FB) * 100;
 	}
 
-	vector<movement> movelist;
-	movelist=computeFakeMoves(movelist,FB,cp);
-	Sint32 bestvalue=((cp==0)?50000:-50000);
-	Sint32 value=0;
-	for(movement m: movelist){
-		value=MinMaxScore(level+1,maxlevel,1-cp,m,FB);
-		if(isBetter(value,bestvalue,cp)){
-			bestvalue=value;
+	Sint32 bestvalue = ((cp == 0) ? 50000 : -50000);
+	Sint32 value = 0;
+	for (movement m : movelist) {
+		value = MinMaxScore(level + 1, maxlevel, 1 - cp, m, FB);
+		if (isBetter(value, bestvalue, cp)) {
+			bestvalue = value;
 		}
 	}
 	return bestvalue;
-
 
 }
 
@@ -342,7 +341,6 @@ Sint32 Strategy::AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
 				beta = value;
 			}
 			if (alpha >= beta) {
-
 				return alpha;
 			}
 		}
@@ -356,7 +354,6 @@ Sint32 Strategy::AlphaBetaScore(int level, int maxlevel, Uint16 cp, movement mv,
 				alpha = value;
 			}
 			if (alpha >= beta) {
-
 				return beta;
 
 			}
